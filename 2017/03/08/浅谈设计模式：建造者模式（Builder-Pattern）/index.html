@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>浅谈设计模式：建造者模式（Builder Pattern） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="什么是建造者模式? 官方解释： 将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。  通俗解释：一个产品抽象成的类可能属性会很多并且这些属性很难在一个简单的（构造）方法中全部初始化完毕，或者说全部构建完毕，这个时候使用一个抽象构造器（Builder），将这类产品的构造属性抽象成几组构建方法，不同的建造者（构建器）可以有不同的组织构建实现，最终在一个流程总控的类（Direct">
+<meta name="keywords" content="设计,技术,设计模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈设计模式：建造者模式（Builder Pattern）">
+<meta property="og:url" content="http://yoursite.com/2017/03/08/浅谈设计模式：建造者模式（Builder-Pattern）/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="什么是建造者模式? 官方解释： 将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。  通俗解释：一个产品抽象成的类可能属性会很多并且这些属性很难在一个简单的（构造）方法中全部初始化完毕，或者说全部构建完毕，这个时候使用一个抽象构造器（Builder），将这类产品的构造属性抽象成几组构建方法，不同的建造者（构建器）可以有不同的组织构建实现，最终在一个流程总控的类（Direct">
+<meta property="og:image" content="http://yoursite.com/img/builder-pattern.png">
+<meta property="og:updated_time" content="2017-12-07T11:43:50.943Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈设计模式：建造者模式（Builder Pattern）">
+<meta name="twitter:description" content="什么是建造者模式? 官方解释： 将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。  通俗解释：一个产品抽象成的类可能属性会很多并且这些属性很难在一个简单的（构造）方法中全部初始化完毕，或者说全部构建完毕，这个时候使用一个抽象构造器（Builder），将这类产品的构造属性抽象成几组构建方法，不同的建造者（构建器）可以有不同的组织构建实现，最终在一个流程总控的类（Direct">
+<meta name="twitter:image" content="http://yoursite.com/img/builder-pattern.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-浅谈设计模式：建造者模式（Builder-Pattern）" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/08/浅谈设计模式：建造者模式（Builder-Pattern）/" class="article-date">
+  <time datetime="2017-03-08T13:21:25.000Z" itemprop="datePublished">2017-03-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      浅谈设计模式：建造者模式（Builder Pattern）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="什么是建造者模式"><a href="#什么是建造者模式" class="headerlink" title="什么是建造者模式?"></a>什么是建造者模式?</h3><ul>
+<li><p>官方解释： 将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。</p>
+</li>
+<li><p>通俗解释：一个产品抽象成的类可能属性会很多并且这些属性很难在一个简单的（构造）方法中全部初始化完毕，或者说全部构建完毕，这个时候使用一个抽象构造器（Builder），将这类产品的构造属性抽象成几组构建方法，不同的建造者（构建器）可以有不同的组织构建实现，最终在一个流程总控的类（Director）中控制流程化调用Builder的构建方法，这样的创建型逻辑便为建造者模式。</p>
+</li>
+</ul>
+<a id="more"></a>
+<h3 id="为什么使用建造者模式？"><a href="#为什么使用建造者模式？" class="headerlink" title="为什么使用建造者模式？"></a>为什么使用建造者模式？</h3><ul>
+<li><p>造者模式与工厂模式很相似，同样具有很好的封装性，客户端不需要知道产品的内部组成细节。</p>
+</li>
+<li><p>Builder（建造者）相对独立，对外部其他的Builder并没有依赖，因此扩展性非常好。</p>
+</li>
+<li><p>对象建造过程中，各个流程责任细分，逐步细化，局部细节的变化对于其他模块不会产生什么影响。</p>
+</li>
+</ul>
+<h3 id="如何使用建造者模式？"><a href="#如何使用建造者模式？" class="headerlink" title="如何使用建造者模式？"></a>如何使用建造者模式？</h3><p>建造者模式的常用UML图如下：</p>
+<p><img src="/img/builder-pattern.png" alt=""></p>
+<p>各个组件的定义如下：</p>
+<ul>
+<li><p>Product（产品）：一个结构复杂的对象，实例化流程比较复杂，具有较多的代码量。实际项目中，该角色也可以是抽象产品，衍生出各种复杂的子类对象。</p>
+</li>
+<li><p>Builder（抽象建造者）：为创建一个Product而抽象出流程各个步骤的抽象接口。主要用此接口来进行扩展出各式各样的产品建造者。</p>
+</li>
+<li><p>ConcreteBuilder（具体建造者）：实现Builder的抽象接口，是一个具体的产品建造者，一般会有两个以上的方法，一个或一个以上接口用来实例化产品，一个用来返回实例化后的产品对象。</p>
+</li>
+<li><p>Director（导演类）：内聚一个Builder接口对象，产品建造的流程总控，对建造者的各个实例步骤方法进行顺序调用，并且利用多态实现不同复杂对象的实例化。一般不与产品类发生直接依赖的关系，仅依赖于抽象层次下的Builder接口。是与客户端（调用方）直接交互的组件。</p>
+</li>
+</ul>
+<p><strong><em>适用范围：</em></strong></p>
+<ul>
+<li><p>需要生成的产品对象内部具有复杂的结构。</p>
+</li>
+<li><p>需要生成的产品对象内部属性相互依赖，若使用常规工厂方法实例化，可能导致系统具有较高的耦合性，因此可采用建造者模式强制内部属性的生成顺序。</p>
+</li>
+<li><p>一个复杂对象的使用工厂模式的实例化算法较为稳定，而需求的变化，经常需要对该对象的局部细节进行修改，此时建造者模式的流程化构建明显满足需求。</p>
+</li>
+</ul>
+<h4 id="应用例子："><a href="#应用例子：" class="headerlink" title="应用例子："></a>应用例子：</h4><p>　　就说说英雄联盟这个游戏吧，游戏的每一个召唤师英雄的属性都是极为复杂的，那么在此简化一下，我想要构建每一个英雄的q、w、e、r四个技能，其他暂时忽视，此时在builder可抽象四个构建这四个技能的方法，以及一个获取最终产品的方法，然后我们先实现builder接口定义一下寒冰射手的英雄Builder（果然对寒冰情有独钟）,接着定义一个Director类，内聚一个Builder接口，定义一下construct方法，方法体内依次调用builder的四个技能构建接口，然后返回构建完召唤师英雄类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  抽象builder，抽象英雄的基本构造</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildQSkill</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildWSkill</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildESkill</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildRSkill</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> GameRole <span class="title">getRole</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  具体builder，寒冰射手艾希的具体builder</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HanBingBuilder</span> <span class="keyword">extends</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> GameRole hangBingRole;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HanBingBuilder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.hangBingRole = <span class="keyword">new</span> GameRole();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buildQSkill</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        hangBingRole.setqSkill(<span class="string">"冰霜射击"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buildWSkill</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        hangBingRole.setwSkill(<span class="string">"万箭齐发"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buildESkill</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        hangBingRole.seteSkill(<span class="string">"鹰击长空"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buildRSkill</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        hangBingRole.setrSkill(<span class="string">"魔法水晶箭"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> GameRole <span class="title">getRole</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> hangBingRole;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  产品，即游戏英雄角色</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GameRole</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String qSkill;</span><br><span class="line">    <span class="keyword">private</span> String wSkill;</span><br><span class="line">    <span class="keyword">private</span> String eSkill;</span><br><span class="line">    <span class="keyword">private</span> String rSkill;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setqSkill</span><span class="params">(String qSkill)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.qSkill = qSkill;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setwSkill</span><span class="params">(String wSkill)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.wSkill = wSkill;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">seteSkill</span><span class="params">(String eSkill)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.eSkill = eSkill;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setrSkill</span><span class="params">(String rSkill)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.rSkill = rSkill;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getqSkill</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> qSkill;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getwSkill</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> wSkill;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">geteSkill</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> eSkill;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getrSkill</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> rSkill;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  导演类</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Director</span> </span>&#123;</span><br><span class="line">    Builder roleBuilder = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRoleBuilder</span><span class="params">(Builder roleBuilder)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.roleBuilder = roleBuilder;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> GameRole <span class="title">construct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        roleBuilder.buildQSkill();</span><br><span class="line">        roleBuilder.buildWSkill();</span><br><span class="line">        roleBuilder.buildESkill();</span><br><span class="line">        roleBuilder.buildRSkill();</span><br><span class="line">        <span class="keyword">return</span> roleBuilder.getRole();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  客户端测试</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Builder hanBingBuilder = <span class="keyword">new</span> HanBingBuilder();</span><br><span class="line">        Director director = <span class="keyword">new</span> Director();</span><br><span class="line">        director.setRoleBuilder(hanBingBuilder);</span><br><span class="line">        GameRole hanBingRole = director.construct();</span><br><span class="line">        System.out.println(<span class="string">"q技能是:"</span> + hanBingRole.getqSkill());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><em>此后，要想新增一个新的召唤师英雄，比如光辉女郎，仅需实现Builder接口定义四个技能构建方法的实现即可，对于其他组件弱依赖，变更成本很低。</em></strong></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/03/08/浅谈设计模式：建造者模式（Builder-Pattern）/" data-id="cjawid23e000j9ol9i72gv2ru" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术/">技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/设计/">设计</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/设计模式/">设计模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/03/08/浅谈设计模式：原型模式（Prototype-Pattern）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          浅谈设计模式：原型模式（Prototype Pattern）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/03/08/浅谈设计模式：抽象工厂模式（Abstract-Factory-Pattern）/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">浅谈设计模式：抽象工厂模式（Abstract Factory Pattern）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/myBatis/">myBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/opencv/">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/思维/">思维</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/感悟/">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/技术/">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/日常问题/">日常问题</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/机器学习/">机器学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计/">设计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计原则/">设计原则</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/车牌识别/">车牌识别</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/myBatis/" style="font-size: 13.75px;">myBatis</a> <a href="/tags/opencv/" style="font-size: 11.25px;">opencv</a> <a href="/tags/python/" style="font-size: 11.25px;">python</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/思维/" style="font-size: 10px;">思维</a> <a href="/tags/感悟/" style="font-size: 10px;">感悟</a> <a href="/tags/技术/" style="font-size: 20px;">技术</a> <a href="/tags/日常问题/" style="font-size: 12.5px;">日常问题</a> <a href="/tags/机器学习/" style="font-size: 11.25px;">机器学习</a> <a href="/tags/杂谈/" style="font-size: 10px;">杂谈</a> <a href="/tags/设计/" style="font-size: 18.75px;">设计</a> <a href="/tags/设计原则/" style="font-size: 16.25px;">设计原则</a> <a href="/tags/设计模式/" style="font-size: 17.5px;">设计模式</a> <a href="/tags/车牌识别/" style="font-size: 11.25px;">车牌识别</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/12/07/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/15/基于python3-x-opencv3的hsv颜色-轮廓法车牌粗定位/">基于python3.x+opencv3的hsv颜色+轮廓法车牌粗定位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/11/基于python3-x-opencv3的图像学轮廓方法车牌粗定位/">基于python3.x + opencv3的图像学轮廓方法车牌粗定位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/06/设计杂谈-一种链式生命周期管理设计/">设计杂谈:一种链式生命周期管理设计</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/30/myBatis中的Spring技术探究：SqlSessionFacotry之InitializingBean（Spring容器加载bean过程中的钩子简析）/">myBatis中的Spring技术探究：SqlSessionFacotry之InitializingBean（Spring容器加载bean过程中的钩子简析）</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

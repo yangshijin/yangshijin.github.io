@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>浅谈设计模式：工厂模式（Factory Pattern） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="什么是工厂模式？ 官方解释：  define an interface or abstract class for creating an object but let the subclasses decide which class to instantiate (定义一个创建对象的接口或者抽象类，但让子类去决定哪一个类去实例化)   通俗解释：当存在大量的公共的创建对象接口时，将其抽象定义一">
+<meta name="keywords" content="设计,技术,设计模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈设计模式：工厂模式（Factory Pattern）">
+<meta property="og:url" content="http://yoursite.com/2017/03/08/浅谈设计模式：工厂模式（Factory-Pattern）/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="什么是工厂模式？ 官方解释：  define an interface or abstract class for creating an object but let the subclasses decide which class to instantiate (定义一个创建对象的接口或者抽象类，但让子类去决定哪一个类去实例化)   通俗解释：当存在大量的公共的创建对象接口时，将其抽象定义一">
+<meta property="og:updated_time" content="2017-12-07T11:43:50.943Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈设计模式：工厂模式（Factory Pattern）">
+<meta name="twitter:description" content="什么是工厂模式？ 官方解释：  define an interface or abstract class for creating an object but let the subclasses decide which class to instantiate (定义一个创建对象的接口或者抽象类，但让子类去决定哪一个类去实例化)   通俗解释：当存在大量的公共的创建对象接口时，将其抽象定义一">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-浅谈设计模式：工厂模式（Factory-Pattern）" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/08/浅谈设计模式：工厂模式（Factory-Pattern）/" class="article-date">
+  <time datetime="2017-03-08T13:01:33.000Z" itemprop="datePublished">2017-03-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      浅谈设计模式：工厂模式（Factory Pattern）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="什么是工厂模式？"><a href="#什么是工厂模式？" class="headerlink" title="什么是工厂模式？"></a>什么是工厂模式？</h3><ul>
+<li><p>官方解释：</p>
+<blockquote>
+<p>define an interface or abstract class for creating an object but let the subclasses decide which class to instantiate</p>
+<p>(定义一个创建对象的接口或者抽象类，但让子类去决定哪一个类去实例化)</p>
+</blockquote>
+</li>
+<li><p>通俗解释：当存在大量的公共的创建对象接口时，将其抽象定义一个接口或者出抽象类来创建对象，并由其子类来决定创建的是哪一个对象。</p>
+<a id="more"></a>
+</li>
+</ul>
+<h3 id="为什么使用工厂模式？"><a href="#为什么使用工厂模式？" class="headerlink" title="为什么使用工厂模式？"></a>为什么使用工厂模式？</h3><ul>
+<li>不对客户端暴露创建对象的实例化逻辑。在<strong><em>实际的项目开发中，类的实例化有时候会是很复杂、很多样的，工厂模式将类的实例化逻辑封装起来，使其对于客户端（调用者）是透明的，只需要依赖相关的工厂类来创建需要的类即可。</em></strong></li>
+</ul>
+<ul>
+<li>通过一个公共的接口去创建新的对象，并且这个创建的对象是延迟到子类去决定的。</li>
+</ul>
+<ul>
+<li>由于不必在代码中关联应用特定的类，促进了松耦合。同样的，<strong><em>特定的类的实例化逻辑往往也是很复杂的，可能需要想实例化相关联的类带进客户端中，使得客户端变得不纯粹，产生变更时造成的影响面更大，而使用工厂模式，即使是你想要创建的类的具体实现（或实例化逻辑）发生变化时，对于客户端来说也是透明的，使得系统更加稳定。</em></strong></li>
+</ul>
+<h3 id="如何使用工厂模式？"><a href="#如何使用工厂模式？" class="headerlink" title="如何使用工厂模式？"></a>如何使用工厂模式？</h3><p>工厂类可以说是实际开发中使用得最多的模式，那么什么时候该使用咧？</p>
+<ul>
+<li>When a class doesn’t know what sub-classes will be required to create.（当一个类不知道将要创建哪一个子类时。）</li>
+</ul>
+<ul>
+<li>When a class wants that its sub-classes specify the objects to be created.（当一个类希望其子类指定要创建的对象时）</li>
+</ul>
+<ul>
+<li>When the parent classes choose the creation of objects to its sub-classes.（当父类选择创建子类的对象时）</li>
+</ul>
+<p>通俗点就是：</p>
+<ul>
+<li>当一种产品具有多个产品簇时</li>
+<li>当产品类的实例化逻辑不希望被客户端依赖时</li>
+<li>当一个系统的多个类可以被抽象为一个共同的特性并能被抽象为一个创建对象的接口或抽象类时。</li>
+</ul>
+<p>　　说到底，就是当你希望你的系统希望具有松耦合、少依赖的特性，并且当前的设计环境符合工厂的设计模型时，均可使用抽象工厂。但是，这里需要注意，当一个类的实例化逻辑非常简单，对于客户端依赖微乎其微以至于变更不产生相互影响或影响甚少时，可直接使用new进行实例化。</p>
+<h4 id="具体应用实例："><a href="#具体应用实例：" class="headerlink" title="具体应用实例："></a>具体应用实例：</h4><p>假如我现在有一个产品A，产品A的实例化需要有两个前置条件（S、Y）,于是呼你可能这样做：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductA</span> </span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="title">ProductA</span><span class="params">(CoditionS s, CoditionY y)</span></span>&#123;</span><br><span class="line">         <span class="comment">//initialize</span></span><br><span class="line">        System. out .println(<span class="string">"成功生产产品A"</span> );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CoditionS</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CoditionY</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestFactory</span> </span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">         <span class="comment">//这里是客户端，即调用方</span></span><br><span class="line">        CoditionS s = <span class="keyword">new</span> ConditionS();</span><br><span class="line">        CoditionY y = <span class="keyword">new</span> ConditionY();</span><br><span class="line">        ProductA  a = <span class="keyword">new</span> ProductA(s, y);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>这里很明显就是客户端已经将产品A所依赖的ConditionS、ConditionY给直接依赖进来了，事实上这两个条件和客户端并没有半毛钱关系，只是与产品A有关系而已，因此这样做的话，严重违反迪米特法则（Law of Rule）即只与直接朋友联系，不要和“陌生人”联系,而且你想想看，如果产品需要的条件不只两个呢，如果产品依赖的条件其中有一两个Condition实例化的时候可能又会依赖到其他的类或变量呢，这是一个恶性循环的依赖过程，这对于一个系统应用来说是一个噩梦，也是一个程序员不应该犯的错误。</li>
+</ul>
+<h4 id="工厂模式来实现："><a href="#工厂模式来实现：" class="headerlink" title="工厂模式来实现："></a>工厂模式来实现：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Product</span> </span>&#123;</span><br><span class="line">     <span class="comment">//产品抽象出来的公共属性</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductA</span> <span class="keyword">extends</span> <span class="title">Product</span> </span>&#123;</span><br><span class="line">     <span class="keyword">private</span> ConditionS s;</span><br><span class="line">     <span class="keyword">private</span> ConditionY y;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="title">ProductA</span><span class="params">(CoditionS s, CoditionY y)</span></span>&#123;</span><br><span class="line">         <span class="comment">//initialize</span></span><br><span class="line">         <span class="keyword">this</span> .s = s;</span><br><span class="line">         <span class="keyword">this</span> .y = y;</span><br><span class="line">        System.out.println( <span class="string">"成功生产产品A"</span> );</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductAFactory</span> </span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> Product <span class="title">createProductA</span><span class="params">()</span></span>&#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="keyword">new</span> ProductA( <span class="keyword">new</span> CondistionS(), <span class="keyword">new</span> ConditionY());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestFactory</span> </span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">         <span class="comment">//这里是客户端，即调用方</span></span><br><span class="line">        ProductAFactory productAFactory = <span class="keyword">new</span> ProductAFactory();</span><br><span class="line">        Product productA = productAFactory.createProductA();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>这个时候，客户端的耦合度明显减少，仅依赖与工厂，对于工厂如何生产产品A的具体逻辑并不关心，并且这个时候整个框架看起来很容易扩展，假设客户端还需要一个属于这个产品族的产品B，这个时候产品B的实例化逻辑再复杂，对于客户端来说也是毫无关系的，它仅仅需要使用工厂来调研那个创建产品B的方法就行，至于具体的创建逻辑，则交给工厂去解决。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/03/08/浅谈设计模式：工厂模式（Factory-Pattern）/" data-id="cjawid23c000i9ol92hwr6heb" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术/">技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/设计/">设计</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/设计模式/">设计模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/03/08/浅谈设计模式：抽象工厂模式（Abstract-Factory-Pattern）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          浅谈设计模式：抽象工厂模式（Abstract Factory Pattern）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/03/07/面向对象设计原则：迪米特法则（Law-of-Demeter）/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">面向对象设计原则：迪米特法则（Law of Demeter）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/myBatis/">myBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/opencv/">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/思维/">思维</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/感悟/">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/技术/">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/日常问题/">日常问题</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/机器学习/">机器学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计/">设计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计原则/">设计原则</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/车牌识别/">车牌识别</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/myBatis/" style="font-size: 13.75px;">myBatis</a> <a href="/tags/opencv/" style="font-size: 11.25px;">opencv</a> <a href="/tags/python/" style="font-size: 11.25px;">python</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/思维/" style="font-size: 10px;">思维</a> <a href="/tags/感悟/" style="font-size: 10px;">感悟</a> <a href="/tags/技术/" style="font-size: 20px;">技术</a> <a href="/tags/日常问题/" style="font-size: 12.5px;">日常问题</a> <a href="/tags/机器学习/" style="font-size: 11.25px;">机器学习</a> <a href="/tags/杂谈/" style="font-size: 10px;">杂谈</a> <a href="/tags/设计/" style="font-size: 18.75px;">设计</a> <a href="/tags/设计原则/" style="font-size: 16.25px;">设计原则</a> <a href="/tags/设计模式/" style="font-size: 17.5px;">设计模式</a> <a href="/tags/车牌识别/" style="font-size: 11.25px;">车牌识别</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/12/07/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/15/基于python3-x-opencv3的hsv颜色-轮廓法车牌粗定位/">基于python3.x+opencv3的hsv颜色+轮廓法车牌粗定位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/11/基于python3-x-opencv3的图像学轮廓方法车牌粗定位/">基于python3.x + opencv3的图像学轮廓方法车牌粗定位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/06/设计杂谈-一种链式生命周期管理设计/">设计杂谈:一种链式生命周期管理设计</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/30/myBatis中的Spring技术探究：SqlSessionFacotry之InitializingBean（Spring容器加载bean过程中的钩子简析）/">myBatis中的Spring技术探究：SqlSessionFacotry之InitializingBean（Spring容器加载bean过程中的钩子简析）</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

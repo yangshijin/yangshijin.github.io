@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>基于python3.x + opencv3的图像学轮廓方法车牌粗定位 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言　　最近准备迈入机器学习的大门，有经验的同事推荐我先从简单的小项目做起，于是乎他推荐了车牌识别的项目，然后就开始了相关的研究，车牌首先是从一个大图中先定位出来，然后才能识别其中的车牌号码，车牌怎么从一张大的图片就定位出来呢，看了基于c++的开源项目easyPR的作者博客，按着他的思路，可以先从图像学的角度来定位车牌。">
+<meta name="keywords" content="python,opencv,车牌识别,机器学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于python3.x + opencv3的图像学轮廓方法车牌粗定位">
+<meta property="og:url" content="http://yoursite.com/2017/04/11/基于python3-x-opencv3的图像学轮廓方法车牌粗定位/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言　　最近准备迈入机器学习的大门，有经验的同事推荐我先从简单的小项目做起，于是乎他推荐了车牌识别的项目，然后就开始了相关的研究，车牌首先是从一个大图中先定位出来，然后才能识别其中的车牌号码，车牌怎么从一张大的图片就定位出来呢，看了基于c++的开源项目easyPR的作者博客，按着他的思路，可以先从图像学的角度来定位车牌。">
+<meta property="og:image" content="http://yoursite.com/img/sobel.jpg">
+<meta property="og:image" content="http://yoursite.com/img/binary.jpg">
+<meta property="og:image" content="http://yoursite.com/img/closed.jpg">
+<meta property="og:image" content="http://yoursite.com/img/dilation.jpg">
+<meta property="og:image" content="http://yoursite.com/img/lunkuo-result.jpg">
+<meta property="og:updated_time" content="2017-12-07T11:43:50.942Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于python3.x + opencv3的图像学轮廓方法车牌粗定位">
+<meta name="twitter:description" content="前言　　最近准备迈入机器学习的大门，有经验的同事推荐我先从简单的小项目做起，于是乎他推荐了车牌识别的项目，然后就开始了相关的研究，车牌首先是从一个大图中先定位出来，然后才能识别其中的车牌号码，车牌怎么从一张大的图片就定位出来呢，看了基于c++的开源项目easyPR的作者博客，按着他的思路，可以先从图像学的角度来定位车牌。">
+<meta name="twitter:image" content="http://yoursite.com/img/sobel.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-基于python3-x-opencv3的图像学轮廓方法车牌粗定位" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/04/11/基于python3-x-opencv3的图像学轮廓方法车牌粗定位/" class="article-date">
+  <time datetime="2017-04-11T14:22:59.000Z" itemprop="datePublished">2017-04-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      基于python3.x + opencv3的图像学轮廓方法车牌粗定位
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h5 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h5><p>　　最近准备迈入机器学习的大门，有经验的同事推荐我先从简单的小项目做起，于是乎他推荐了车牌识别的项目，然后就开始了相关的研究，车牌首先是从一个大图中先定位出来，然后才能识别其中的车牌号码，车牌怎么从一张大的图片就定位出来呢，看了基于c++的开源项目easyPR的作者博客，按着他的思路，可以先从图像学的角度来定位车牌。<br><a id="more"></a></p>
+<h5 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h5><ol>
+<li>由于在选型的时候，选了最近很火的谷歌的开源深度学习框架“TensorFlow”,又由于本人是苦逼的windows党，TensorFlow目前最新的版本，需要制定python版本3.5，于是第一个需要安装的就是python3.5啦。</li>
+<li>另外一个就是基于python安装的opencv3</li>
+</ol>
+<h5 id="定位思路（基于轮廓定位）"><a href="#定位思路（基于轮廓定位）" class="headerlink" title="定位思路（基于轮廓定位）"></a>定位思路（基于轮廓定位）</h5><h6 id="1-图片灰度化（将三元色的图片转换为只有一个灰度通道的图片，处理起来更容易）"><a href="#1-图片灰度化（将三元色的图片转换为只有一个灰度通道的图片，处理起来更容易）" class="headerlink" title="1.图片灰度化（将三元色的图片转换为只有一个灰度通道的图片，处理起来更容易）"></a>1.图片灰度化（将三元色的图片转换为只有一个灰度通道的图片，处理起来更容易）</h6><h6 id="2-图片高斯模糊（去除干扰的噪声，easyPR的作者思路是先高斯模糊再灰度化）"><a href="#2-图片高斯模糊（去除干扰的噪声，easyPR的作者思路是先高斯模糊再灰度化）" class="headerlink" title="2.图片高斯模糊（去除干扰的噪声，easyPR的作者思路是先高斯模糊再灰度化）"></a>2.图片高斯模糊（去除干扰的噪声，easyPR的作者思路是先高斯模糊再灰度化）</h6><h6 id="3-Sobel算子处理"><a href="#3-Sobel算子处理" class="headerlink" title="3.Sobel算子处理"></a>3.Sobel算子处理</h6><h6 id="4-图像二值化"><a href="#4-图像二值化" class="headerlink" title="4.图像二值化"></a>4.图像二值化</h6><h6 id="5-闭操作"><a href="#5-闭操作" class="headerlink" title="5.闭操作"></a>5.闭操作</h6><h6 id="6-腐蚀-gt-膨胀"><a href="#6-腐蚀-gt-膨胀" class="headerlink" title="6.腐蚀-&gt;膨胀"></a>6.腐蚀-&gt;膨胀</h6><h6 id="7-取轮廓列表"><a href="#7-取轮廓列表" class="headerlink" title="7.取轮廓列表"></a>7.取轮廓列表</h6><h6 id="8-基于车牌形状特性筛选"><a href="#8-基于车牌形状特性筛选" class="headerlink" title="8.基于车牌形状特性筛选"></a>8.基于车牌形状特性筛选</h6><p>上面七个步骤大致就是我初步实现的思路，借鉴了easyPR的作者的前部分思路，当然这只是粗定位，后面还需要很多需要优化，但作为初学者，第一步肯定是先从简单的来实现啦。</p>
+<h6 id="1-图片灰度化"><a href="#1-图片灰度化" class="headerlink" title="1. 图片灰度化"></a>1. 图片灰度化</h6><p>  这一步使用python+opencv实现起来非常简单，有两种方法，第一种是加载图片的时候加一个参数，直接灰度化，第二种是加载后另外调用opencv的API-&gt;cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)来进行灰度化，居然方法细节可以直接看方法定义</p>
+<h6 id="2-高斯模糊"><a href="#2-高斯模糊" class="headerlink" title="2. 高斯模糊"></a>2. 高斯模糊</h6><p>　　高斯模糊，也称高斯平滑，根据高斯曲线调节像素色值，它是有选择地模糊图像。说得直白一点，就是高斯模糊能够把某一点周围的像素色值按高斯曲线统计起来，采用数学上加权平均的计算方法得到这条曲线的色值，最后能够留下人物的轮廓，即曲线．具体的原理介绍各位可以自己google一下。<br>　　opencv也提供了高斯模糊的API-&gt;cv2.GaussianBlur(),具体参数含义可以看一看API手册，这里只讲第二个参数，即模糊范围，这个范围分为x、y方向，我选择了3-3作为模糊的计算范围。</p>
+<h6 id="3-sobel算子处理"><a href="#3-sobel算子处理" class="headerlink" title="3. sobel算子处理"></a>3. sobel算子处理</h6><p>　　sobel算子是一种图像处理算法，主要用作边缘检测.车牌的特征非常适合用sobel算子来做处理，通过sobel算子能清晰的识别出车牌的边缘，字母的边缘，得出的灰度图如下所示：<br><img src="/img/sobel.jpg" alt=""></p>
+<h6 id="4-二值化"><a href="#4-二值化" class="headerlink" title="4. 二值化"></a>4. 二值化</h6><p> 　二值化的原理很简单，就是对一张灰度图像，基于某个阈值，当大于这个阈值的时候，置为1，小于这个阈值的时候置为0，比如我设置一个阈值为150，那么当这张灰度图的图片的某个像素点的值为170，那么二值化操作后的值就是1，也就是颜色通道的最大值255。为什么要进行二值化呢，和灰度化一样，进一步简化图像的表达，让之后的形态学图像处理更加简单。二值化后的图像如下：<br> <img src="/img/binary.jpg" alt=""></p>
+<h6 id="5-闭操作-1"><a href="#5-闭操作-1" class="headerlink" title="5. 闭操作"></a>5. 闭操作</h6><p>　　要了解闭操作，首先要了解图像学的腐蚀、膨胀，什么是图像的膨胀处理呢？通俗点来讲，就是有一个二维的矩阵定义，比如3*3,然后对一个图像进行像素点遍历，基于每一个像素点作为矩阵中心点，然后对这个像素点的周边被矩阵包含的像素点做一个局部最大值的替换，腐蚀操作则反之，取局部最小值。</p>
+<p>　　那么闭操作的原理其实就是对图像先进行膨胀操作，再进行腐蚀操作，这样有什么作用呢，相信大家也看到二值化后的图像，车牌的字符边缘很清晰的展现出来，但是我们这是要根据车牌轮廓来做粗定位的，那么我们要让车牌区域变成一个白色的矩形，闭操作第一步的膨胀操作，将车牌字符与字符之间的空白连接起来，想成一个基于车牌区域往外扩展一点的矩形区域，第二步闭操作，将由于膨胀操作使得车牌矩形往外扩展的区域腐蚀掉。</p>
+<p>　　这个时候需要讲一下，这里的闭操作的参数之一，闭操作的像素范围，即进行局部极值计算的二维矩阵定义，由于车牌的特性，我们定义的矩阵最好是按照车牌的长宽比例来进行处理，大约是2.5-5.5这个比例内的参数调优，我自己试了一下，4左右的比例应该效果是最好的，另外就是范围的大小，由于要定位的图片不一，因此最好是根据你当前的图片库的平均大小来做确定，我自己网上找图片试了一下，大致是20左右的x像素点，4-5左右的y像素点。处理结果如下：<br><img src="/img/closed.jpg" alt=""></p>
+<h6 id="6-腐蚀-gt-膨胀-1"><a href="#6-腐蚀-gt-膨胀-1" class="headerlink" title="6. 腐蚀-&gt;膨胀"></a>6. 腐蚀-&gt;膨胀</h6><p>　　细心的朋友应该发现了，上面闭操作之后的图片，还是有一些小的白点细长的白点存留，这些俗称为噪点，也就是干扰项，这个时候需要进行腐蚀操作，将细小的点给腐蚀掉，然后腐蚀掉肯定车牌区域的大小会受影响，因此后面要膨胀处理，来补偿因为处理掉细节而腐蚀掉的区域。其实腐蚀操作也就是开操作，这个操作一般也就是用来处理掉细小的噪点的。那这里我为什么要分开呢，因为要进行车牌定位的图片的噪点往往进行一轮腐蚀没办法完全腐蚀掉，而闭操作只是进行一轮腐蚀后就进行膨胀了，这样没有完全腐蚀掉的细节又重新膨胀回来了。因此分开操作，opencv的腐蚀、膨胀方法，有个参数可以定义进行几轮处理，因此这里可以根据图片的情况，具体调优。调优后的图片如下：<br><img src="/img/dilation.jpg" alt=""></p>
+<h6 id="7-取轮廓列表-1"><a href="#7-取轮廓列表-1" class="headerlink" title="7. 取轮廓列表"></a>7. 取轮廓列表</h6><p>　　找轮廓列表其实就是讲上面处理后的二值化图像的白色部分筛选出来，opencv有现成的API，cv2. cv2.findContours()</p>
+<h6 id="8-筛选"><a href="#8-筛选" class="headerlink" title="8. 筛选"></a>8. 筛选</h6><p>　　找到所有的轮廓之后，就要基于车牌的特性进行筛选了，首先将轮廓转为一个矩形，然后将面积小的过滤掉，然后根据车牌的形态特性，即长宽比例筛选出正确的车牌矩形，当然，这里有可能筛选不到任何的矩形，也有可能筛选到多个矩形出来。比如本图的例子图片，就筛选出了两个矩形出来，如下(我用绿色的线画出来了)：<br><img src="/img/lunkuo-result.jpg" alt=""></p>
+<p>这里的只是初步将车牌区域定位出来，甚至可能定位出多个不是车牌的区域，后面需要继续优化。</p>
+<h6 id="实现代码如下："><a href="#实现代码如下：" class="headerlink" title="实现代码如下："></a>实现代码如下：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">minPlateRatio = <span class="number">2.5</span> <span class="comment"># 车牌最小比例</span></span><br><span class="line">maxPlateRatio = <span class="number">5</span>   <span class="comment"># 车牌最大比例</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 图像处理</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">imageProcess</span><span class="params">(gray)</span>:</span></span><br><span class="line">    <span class="comment"># 高斯平滑</span></span><br><span class="line">    gaussian = cv2.GaussianBlur(gray, (<span class="number">3</span>, <span class="number">3</span>), <span class="number">0</span>, <span class="number">0</span>, cv2.BORDER_DEFAULT)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Sobel算子，X方向求梯度</span></span><br><span class="line">    sobel = cv2.convertScaleAbs(cv2.Sobel(gaussian, cv2.CV_16S, <span class="number">1</span>, <span class="number">0</span>, ksize=<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 二值化</span></span><br><span class="line">    ret, binary = cv2.threshold(sobel, <span class="number">150</span>, <span class="number">255</span>, cv2.THRESH_BINARY)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 对二值化后的图像进行闭操作</span></span><br><span class="line">    element = cv2.getStructuringElement(cv2.MORPH_RECT, (<span class="number">18</span>, <span class="number">4</span>))</span><br><span class="line">    closed = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, element)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 再通过腐蚀-&gt;膨胀 去掉比较小的噪点</span></span><br><span class="line">    erosion = cv2.erode(closed, <span class="keyword">None</span>, iterations=<span class="number">2</span>)</span><br><span class="line">    dilation = cv2.dilate(erosion, <span class="keyword">None</span>, iterations=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 返回最终图像</span></span><br><span class="line">    <span class="keyword">return</span> dilation</span><br><span class="line"></span><br><span class="line"><span class="comment"># 找到符合车牌形状的矩形</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">findPlateNumberRegion</span><span class="params">(img)</span>:</span></span><br><span class="line">    region = []</span><br><span class="line">    <span class="comment"># 查找外框轮廓</span></span><br><span class="line">    contours_img, contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)</span><br><span class="line">    print(<span class="string">"contours lenth is :%s"</span> % (len(contours)))</span><br><span class="line">    <span class="comment"># 筛选面积小的</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(contours)):</span><br><span class="line">        cnt = contours[i]</span><br><span class="line">        <span class="comment"># 计算轮廓面积</span></span><br><span class="line">        area = cv2.contourArea(cnt)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 面积小的忽略</span></span><br><span class="line">        <span class="keyword">if</span> area &lt; <span class="number">2000</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 转换成对应的矩形（最小）</span></span><br><span class="line">        rect = cv2.minAreaRect(cnt)</span><br><span class="line">        <span class="comment"># print("rect is:%s" % &#123;rect&#125;)</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 根据矩形转成box类型，并int化</span></span><br><span class="line">        box = np.int32(cv2.boxPoints(rect))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 计算高和宽</span></span><br><span class="line">        height = abs(box[<span class="number">0</span>][<span class="number">1</span>] - box[<span class="number">2</span>][<span class="number">1</span>])</span><br><span class="line">        width = abs(box[<span class="number">0</span>][<span class="number">0</span>] - box[<span class="number">2</span>][<span class="number">0</span>])</span><br><span class="line">        <span class="comment"># 正常情况车牌长高比在2.7-5之间,那种两行的有可能小于2.5，这里不考虑</span></span><br><span class="line">        ratio = float(width) / float(height)</span><br><span class="line">        <span class="keyword">if</span> ratio &gt; maxPlateRatio <span class="keyword">or</span> ratio &lt; minPlateRatio:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="comment"># 符合条件，加入到轮廓集合</span></span><br><span class="line">        region.append(box)</span><br><span class="line">    <span class="keyword">return</span> region</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">detect</span><span class="params">(img)</span>:</span></span><br><span class="line">  <span class="comment"># 转化成灰度图</span></span><br><span class="line">  gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)</span><br><span class="line">  <span class="comment"># 形态学变换的处理</span></span><br><span class="line">  dilation = imageProcess(gray)</span><br><span class="line">  <span class="comment"># 查找车牌区域</span></span><br><span class="line">  region = findPlateNumberRegion(dilation)</span><br><span class="line">  <span class="comment"># 默认取第一个</span></span><br><span class="line">  box = region[<span class="number">0</span>]</span><br><span class="line">  <span class="comment">#在原图画出轮廓</span></span><br><span class="line">  cv2.drawContours(img, [box], <span class="number">0</span>, (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">2</span>)</span><br><span class="line">  <span class="comment"># 找出box四个角的x点，y点，构成数组并排序</span></span><br><span class="line">  ys = [box[<span class="number">0</span>, <span class="number">1</span>], box[<span class="number">1</span>, <span class="number">1</span>], box[<span class="number">2</span>, <span class="number">1</span>], box[<span class="number">3</span>, <span class="number">1</span>]]</span><br><span class="line">  xs = [box[<span class="number">0</span>, <span class="number">0</span>], box[<span class="number">1</span>, <span class="number">0</span>], box[<span class="number">2</span>, <span class="number">0</span>], box[<span class="number">3</span>, <span class="number">0</span>]]</span><br><span class="line">  ys_sorted_index = np.argsort(ys)</span><br><span class="line">  xs_sorted_index = np.argsort(xs)</span><br><span class="line">  <span class="comment"># 取最小的x，y 和最大的x，y 构成切割矩形对角线</span></span><br><span class="line">  min_x = box[xs_sorted_index[<span class="number">0</span>], <span class="number">0</span>]</span><br><span class="line">  max_x = box[xs_sorted_index[<span class="number">3</span>], <span class="number">0</span>]</span><br><span class="line">  min_y = box[ys_sorted_index[<span class="number">0</span>], <span class="number">1</span>]</span><br><span class="line">  max_y = box[ys_sorted_index[<span class="number">3</span>], <span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">  <span class="comment"># 切割图片，其实就是取图片二维数组的在x、y维度上的最小minX,minY 到最大maxX,maxY区间的子数组</span></span><br><span class="line">  img_plate = img[min_y:max_y, min_x:max_x]</span><br><span class="line">  <span class="keyword">return</span> img_plate</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">        imagePath = <span class="string">'d:\\CarImage\\car_04.jpg'</span> <span class="comment"># 图片路径</span></span><br><span class="line">        img = cv2.imread(imagePath)</span><br><span class="line">        img = detect(img)</span><br><span class="line">        cv2.imshow(<span class="string">"img"</span>,img)</span><br><span class="line">        cv2.waitKey(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/04/11/基于python3-x-opencv3的图像学轮廓方法车牌粗定位/" data-id="cjawid23200089ol9xu0ottjq" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/opencv/">opencv</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/机器学习/">机器学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/车牌识别/">车牌识别</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/04/15/基于python3-x-opencv3的hsv颜色-轮廓法车牌粗定位/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          基于python3.x+opencv3的hsv颜色+轮廓法车牌粗定位
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/04/06/设计杂谈-一种链式生命周期管理设计/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">设计杂谈:一种链式生命周期管理设计</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/myBatis/">myBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/opencv/">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/思维/">思维</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/感悟/">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/技术/">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/日常问题/">日常问题</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/机器学习/">机器学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计/">设计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计原则/">设计原则</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/车牌识别/">车牌识别</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/myBatis/" style="font-size: 13.75px;">myBatis</a> <a href="/tags/opencv/" style="font-size: 11.25px;">opencv</a> <a href="/tags/python/" style="font-size: 11.25px;">python</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/思维/" style="font-size: 10px;">思维</a> <a href="/tags/感悟/" style="font-size: 10px;">感悟</a> <a href="/tags/技术/" style="font-size: 20px;">技术</a> <a href="/tags/日常问题/" style="font-size: 12.5px;">日常问题</a> <a href="/tags/机器学习/" style="font-size: 11.25px;">机器学习</a> <a href="/tags/杂谈/" style="font-size: 10px;">杂谈</a> <a href="/tags/设计/" style="font-size: 18.75px;">设计</a> <a href="/tags/设计原则/" style="font-size: 16.25px;">设计原则</a> <a href="/tags/设计模式/" style="font-size: 17.5px;">设计模式</a> <a href="/tags/车牌识别/" style="font-size: 11.25px;">车牌识别</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/12/07/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/15/基于python3-x-opencv3的hsv颜色-轮廓法车牌粗定位/">基于python3.x+opencv3的hsv颜色+轮廓法车牌粗定位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/11/基于python3-x-opencv3的图像学轮廓方法车牌粗定位/">基于python3.x + opencv3的图像学轮廓方法车牌粗定位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/06/设计杂谈-一种链式生命周期管理设计/">设计杂谈:一种链式生命周期管理设计</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/30/myBatis中的Spring技术探究：SqlSessionFacotry之InitializingBean（Spring容器加载bean过程中的钩子简析）/">myBatis中的Spring技术探究：SqlSessionFacotry之InitializingBean（Spring容器加载bean过程中的钩子简析）</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

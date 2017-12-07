@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>面向对象设计--译自Robert C. Martin | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="原文地址http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod 作者：Robert C Martin(uncle bob) 面向对象设计　　什么是面向对象设计？这是怎么一回事？它有什么好处？它的代价是什么？在这个几乎所有开发者都在使用某种面向对象语言的时代问这些问题似乎是很愚蠢的。">
+<meta name="keywords" content="技术,设计原则">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面向对象设计--译自Robert C. Martin">
+<meta property="og:url" content="http://yoursite.com/2017/02/27/面向对象设计原则/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="原文地址http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod 作者：Robert C Martin(uncle bob) 面向对象设计　　什么是面向对象设计？这是怎么一回事？它有什么好处？它的代价是什么？在这个几乎所有开发者都在使用某种面向对象语言的时代问这些问题似乎是很愚蠢的。">
+<meta property="og:updated_time" content="2017-12-07T11:43:50.947Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="面向对象设计--译自Robert C. Martin">
+<meta name="twitter:description" content="原文地址http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod 作者：Robert C Martin(uncle bob) 面向对象设计　　什么是面向对象设计？这是怎么一回事？它有什么好处？它的代价是什么？在这个几乎所有开发者都在使用某种面向对象语言的时代问这些问题似乎是很愚蠢的。">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-面向对象设计原则" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/27/面向对象设计原则/" class="article-date">
+  <time datetime="2017-02-27T11:27:01.000Z" itemprop="datePublished">2017-02-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      面向对象设计--译自Robert C. Martin
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>原文地址http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod
+作者：Robert C Martin(uncle bob)
+</code></pre><h3 id="面向对象设计"><a href="#面向对象设计" class="headerlink" title="面向对象设计"></a>面向对象设计</h3><h4 id="什么是面向对象设计？这是怎么一回事？它有什么好处？它的代价是什么？在这个几乎所有开发者都在使用某种面向对象语言的时代问这些问题似乎是很愚蠢的。但是这些问题是很重要的，因为，在我看来，我们大多数人使用这些语言的时候不知道为什么，不知道如何从这些语言中得到最大的价值。所有在我们这个行业的革命，有两个很成功的例子一直深入人心，令我们认为理所当然的存在。结构化编程和面向对象编程。如今所有主流的编程语言受到这两门学问的深刻影响。是的，已经很难写出不具备结构化程序设计和面向对象编程的外观的程序。我们的主流语言没有goto语句，因此似乎服从结构化编程有名的禁制。大多数主流语言是基于类的并且在不在类内部的时候不支持函数方法和变量，因此似乎符合面向对象编程最明显的标志。"><a href="#什么是面向对象设计？这是怎么一回事？它有什么好处？它的代价是什么？在这个几乎所有开发者都在使用某种面向对象语言的时代问这些问题似乎是很愚蠢的。但是这些问题是很重要的，因为，在我看来，我们大多数人使用这些语言的时候不知道为什么，不知道如何从这些语言中得到最大的价值。所有在我们这个行业的革命，有两个很成功的例子一直深入人心，令我们认为理所当然的存在。结构化编程和面向对象编程。如今所有主流的编程语言受到这两门学问的深刻影响。是的，已经很难写出不具备结构化程序设计和面向对象编程的外观的程序。我们的主流语言没有goto语句，因此似乎服从结构化编程有名的禁制。大多数主流语言是基于类的并且在不在类内部的时候不支持函数方法和变量，因此似乎符合面向对象编程最明显的标志。" class="headerlink" title="　　什么是面向对象设计？这是怎么一回事？它有什么好处？它的代价是什么？在这个几乎所有开发者都在使用某种面向对象语言的时代问这些问题似乎是很愚蠢的。但是这些问题是很重要的，因为，在我看来，我们大多数人使用这些语言的时候不知道为什么，不知道如何从这些语言中得到最大的价值。所有在我们这个行业的革命，有两个很成功的例子一直深入人心，令我们认为理所当然的存在。结构化编程和面向对象编程。如今所有主流的编程语言受到这两门学问的深刻影响。是的，已经很难写出不具备结构化程序设计和面向对象编程的外观的程序。我们的主流语言没有goto语句，因此似乎服从结构化编程有名的禁制。大多数主流语言是基于类的并且在不在类内部的时候不支持函数方法和变量，因此似乎符合面向对象编程最明显的标志。"></a>　　什么是面向对象设计？这是怎么一回事？它有什么好处？它的代价是什么？在这个几乎所有开发者都在使用某种面向对象语言的时代问这些问题似乎是很愚蠢的。<a id="more"></a>但是这些问题是很重要的，因为，在我看来，我们大多数人使用这些语言的时候不知道为什么，不知道如何从这些语言中得到最大的价值。所有在我们这个行业的革命，有两个很成功的例子一直深入人心，令我们认为理所当然的存在。结构化编程和面向对象编程。如今所有主流的编程语言受到这两门学问的深刻影响。是的，已经很难写出不具备结构化程序设计和面向对象编程的外观的程序。我们的主流语言没有goto语句，因此似乎服从结构化编程有名的禁制。大多数主流语言是基于类的并且在不在类内部的时候不支持函数方法和变量，因此似乎符合面向对象编程最明显的标志。</h4><h4 id="这些语言编写的程序看起来似乎是结构化和面向对象的，但这看起来是可决定的。往往今天的程序员没有意识到这些原则是他们的编程语言围绕的学问（结构化和面向对象）的基础。在另一个博客中，我将讨论结构化程序设计的原则。在这个博客，我想谈谈面向对象编程的原则。"><a href="#这些语言编写的程序看起来似乎是结构化和面向对象的，但这看起来是可决定的。往往今天的程序员没有意识到这些原则是他们的编程语言围绕的学问（结构化和面向对象）的基础。在另一个博客中，我将讨论结构化程序设计的原则。在这个博客，我想谈谈面向对象编程的原则。" class="headerlink" title="　　这些语言编写的程序看起来似乎是结构化和面向对象的，但这看起来是可决定的。往往今天的程序员没有意识到这些原则是他们的编程语言围绕的学问（结构化和面向对象）的基础。在另一个博客中，我将讨论结构化程序设计的原则。在这个博客，我想谈谈面向对象编程的原则。"></a>　　这些语言编写的程序看起来似乎是结构化和面向对象的，但这看起来是可决定的。往往今天的程序员没有意识到这些原则是他们的编程语言围绕的学问（结构化和面向对象）的基础。在另一个博客中，我将讨论结构化程序设计的原则。在这个博客，我想谈谈面向对象编程的原则。</h4><h4 id="在1995年3月，在comp-object，我写了一篇文章，是我用过很多次的一组OOD原则的第一点。你可以从我的PPP-book中看到记载，另外在-theobjectmentor-website还有很多文章，包括我们熟知的summary。"><a href="#在1995年3月，在comp-object，我写了一篇文章，是我用过很多次的一组OOD原则的第一点。你可以从我的PPP-book中看到记载，另外在-theobjectmentor-website还有很多文章，包括我们熟知的summary。" class="headerlink" title="　　在1995年3月，在comp.object，我写了一篇文章，是我用过很多次的一组OOD原则的第一点。你可以从我的PPP book中看到记载，另外在 theobjectmentor website还有很多文章，包括我们熟知的summary。"></a>　　在1995年3月，在comp.object，我写了一篇文章，是我用过很多次的一组OOD原则的第一点。你可以从我的PPP book中看到记载，另外在 theobjectmentor website还有很多文章，包括我们熟知的summary。</h4><h4 id="这些原则揭露OOD的依赖管理方面的思想，而不是在构思和建模方面的思想。这不是说OO对于问题空间的构思方面是一件很糟糕的工具，也并不是说它不是创建模型的好场所。可以肯定，很多人在OO的这些方面获得价值。但是，这些原则集中在紧密的依赖管理关系中。"><a href="#这些原则揭露OOD的依赖管理方面的思想，而不是在构思和建模方面的思想。这不是说OO对于问题空间的构思方面是一件很糟糕的工具，也并不是说它不是创建模型的好场所。可以肯定，很多人在OO的这些方面获得价值。但是，这些原则集中在紧密的依赖管理关系中。" class="headerlink" title="　　这些原则揭露OOD的依赖管理方面的思想，而不是在构思和建模方面的思想。这不是说OO对于问题空间的构思方面是一件很糟糕的工具，也并不是说它不是创建模型的好场所。可以肯定，很多人在OO的这些方面获得价值。但是，这些原则集中在紧密的依赖管理关系中。"></a>　　这些原则揭露OOD的依赖管理方面的思想，而不是在构思和建模方面的思想。这不是说OO对于问题空间的构思方面是一件很糟糕的工具，也并不是说它不是创建模型的好场所。可以肯定，很多人在OO的这些方面获得价值。但是，这些原则集中在紧密的依赖管理关系中。</h4><h4 id="依赖关系管理是一个我们大多数人要面对的问题，每当我们的屏幕出现一批令人讨厌的、纠结的遗留代码，我们正在经历依赖关系管理不佳的后果。依赖关系管理不佳会导致代码是很难改变的，脆弱的，不可复用的。的确，我就谈谈PPP-book中几本不同设计味道的书，全部和依赖关系管理有联系。另一方面，当依赖关系被良好管理后，代码是灵活的，健壮的，可复用的。所以依赖关系管理，还有这些原则，是软件开发者梦寐以求的基本工具。"><a href="#依赖关系管理是一个我们大多数人要面对的问题，每当我们的屏幕出现一批令人讨厌的、纠结的遗留代码，我们正在经历依赖关系管理不佳的后果。依赖关系管理不佳会导致代码是很难改变的，脆弱的，不可复用的。的确，我就谈谈PPP-book中几本不同设计味道的书，全部和依赖关系管理有联系。另一方面，当依赖关系被良好管理后，代码是灵活的，健壮的，可复用的。所以依赖关系管理，还有这些原则，是软件开发者梦寐以求的基本工具。" class="headerlink" title="　　依赖关系管理是一个我们大多数人要面对的问题，每当我们的屏幕出现一批令人讨厌的、纠结的遗留代码，我们正在经历依赖关系管理不佳的后果。依赖关系管理不佳会导致代码是很难改变的，脆弱的，不可复用的。的确，我就谈谈PPP book中几本不同设计味道的书，全部和依赖关系管理有联系。另一方面，当依赖关系被良好管理后，代码是灵活的，健壮的，可复用的。所以依赖关系管理，还有这些原则，是软件开发者梦寐以求的基本工具。"></a>　　依赖关系管理是一个我们大多数人要面对的问题，每当我们的屏幕出现一批令人讨厌的、纠结的遗留代码，我们正在经历依赖关系管理不佳的后果。依赖关系管理不佳会导致代码是很难改变的，脆弱的，不可复用的。的确，我就谈谈PPP book中几本不同设计味道的书，全部和依赖关系管理有联系。另一方面，当依赖关系被良好管理后，代码是灵活的，健壮的，可复用的。所以依赖关系管理，还有这些原则，是软件开发者梦寐以求的基本工具。</h4><h4 id="前五个原则是类设计原则，如下："><a href="#前五个原则是类设计原则，如下：" class="headerlink" title="前五个原则是类设计原则，如下："></a>前五个原则是类设计原则，如下：</h4><table>
+<thead>
+<tr>
+<th>缩写</th>
+<th>全称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SRR</td>
+<td>单一职责原则（The Single Responsibility Principle）</td>
+<td>该有且只有一个发生变化的原因</td>
+</tr>
+<tr>
+<td>OCP</td>
+<td>开闭原则（The Open Closed Principle）</td>
+<td>你应该能够拓展类的行为，而不是修改它</td>
+</tr>
+<tr>
+<td>LSP</td>
+<td>里氏替换原则（The Liskov Substitution Principle）</td>
+<td>派生类必须是能够替代基类的</td>
+</tr>
+<tr>
+<td>ISP</td>
+<td>接口隔离原则（The Interface Segregation Principle）</td>
+<td>使用户指定的类建立M在最小粒度上</td>
+</tr>
+<tr>
+<td>DIP</td>
+<td>依赖倒置原则（The Dependency Inversion Principle）</td>
+<td>依赖于抽象，不依赖于具体</td>
+</tr>
+</tbody>
+</table>
+<h2 id="下面的六个原则是关于包的，这里的包是一个可交付的二进制文件，像-jar或Dll，而不是java中的包或者c-中的域名空间。"><a href="#下面的六个原则是关于包的，这里的包是一个可交付的二进制文件，像-jar或Dll，而不是java中的包或者c-中的域名空间。" class="headerlink" title="下面的六个原则是关于包的，这里的包是一个可交付的二进制文件，像.jar或Dll，而不是java中的包或者c++中的域名空间。"></a>下面的六个原则是关于包的，这里的包是一个可交付的二进制文件，像.jar或Dll，而不是java中的包或者c++中的域名空间。</h2><h3 id="前三个原则是关于包内聚的，它告诉我们应该往包里塞什么"><a href="#前三个原则是关于包内聚的，它告诉我们应该往包里塞什么" class="headerlink" title="前三个原则是关于包内聚的，它告诉我们应该往包里塞什么:"></a>前三个原则是关于包内聚的，它告诉我们应该往包里塞什么:</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>缩写</th>
+<th>全称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REP</td>
+<td>重用-发布等价原则（Release-Reuse Equivalency Principle）</td>
+<td>复用的粒度就是发布的粒度</td>
+</tr>
+<tr>
+<td>CCP</td>
+<td>共同封闭原则（The Common Closure Principle）</td>
+<td>一起改变的类一起打包</td>
+</tr>
+<tr>
+<td>CRP</td>
+<td>共同重用原则（The Common Reuse Principle）</td>
+<td>一起使用的类一起打包</td>
+</tr>
+</tbody>
+</table>
+<h3 id="最后三个原则是关于包之间的耦合的，并来谈谈评估系统的包结构的指标。"><a href="#最后三个原则是关于包之间的耦合的，并来谈谈评估系统的包结构的指标。" class="headerlink" title="最后三个原则是关于包之间的耦合的，并来谈谈评估系统的包结构的指标。"></a>最后三个原则是关于包之间的耦合的，并来谈谈评估系统的包结构的指标。</h3><table>
+<thead>
+<tr>
+<th>缩写</th>
+<th>全称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ADP</td>
+<td>无循环依赖原则（The Acyclic Dependencies Principle）</td>
+<td>包的依赖关系图必须没有环</td>
+</tr>
+<tr>
+<td>SDP</td>
+<td>稳定依赖原则（ The Stable Dependencies Principle）</td>
+<td>依赖在稳定的方向上（更稳定的包）</td>
+</tr>
+<tr>
+<td>SAP</td>
+<td>稳定抽象等价原则（The Stable Abstractions Principle）</td>
+<td>包的稳定性随着抽象程序增加而增加</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/27/面向对象设计原则/" data-id="cjawid23r00169ol97sjsov73" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术/">技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/设计原则/">设计原则</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/03/07/面向对象设计原则：里氏替换原则-Liskov-Substitution-principle/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          面向对象设计原则：里氏替换原则(Liskov Substitution principle)
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/myBatis/">myBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/opencv/">opencv</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/思维/">思维</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/感悟/">感悟</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/技术/">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/日常问题/">日常问题</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/机器学习/">机器学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂谈/">杂谈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计/">设计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计原则/">设计原则</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/设计模式/">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/车牌识别/">车牌识别</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/myBatis/" style="font-size: 13.75px;">myBatis</a> <a href="/tags/opencv/" style="font-size: 11.25px;">opencv</a> <a href="/tags/python/" style="font-size: 11.25px;">python</a> <a href="/tags/spring/" style="font-size: 11.25px;">spring</a> <a href="/tags/思维/" style="font-size: 10px;">思维</a> <a href="/tags/感悟/" style="font-size: 10px;">感悟</a> <a href="/tags/技术/" style="font-size: 20px;">技术</a> <a href="/tags/日常问题/" style="font-size: 12.5px;">日常问题</a> <a href="/tags/机器学习/" style="font-size: 11.25px;">机器学习</a> <a href="/tags/杂谈/" style="font-size: 10px;">杂谈</a> <a href="/tags/设计/" style="font-size: 18.75px;">设计</a> <a href="/tags/设计原则/" style="font-size: 16.25px;">设计原则</a> <a href="/tags/设计模式/" style="font-size: 17.5px;">设计模式</a> <a href="/tags/车牌识别/" style="font-size: 11.25px;">车牌识别</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/12/07/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/15/基于python3-x-opencv3的hsv颜色-轮廓法车牌粗定位/">基于python3.x+opencv3的hsv颜色+轮廓法车牌粗定位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/11/基于python3-x-opencv3的图像学轮廓方法车牌粗定位/">基于python3.x + opencv3的图像学轮廓方法车牌粗定位</a>
+          </li>
+        
+          <li>
+            <a href="/2017/04/06/设计杂谈-一种链式生命周期管理设计/">设计杂谈:一种链式生命周期管理设计</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/30/myBatis中的Spring技术探究：SqlSessionFacotry之InitializingBean（Spring容器加载bean过程中的钩子简析）/">myBatis中的Spring技术探究：SqlSessionFacotry之InitializingBean（Spring容器加载bean过程中的钩子简析）</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
